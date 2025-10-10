@@ -10,7 +10,7 @@
     "duration": "28:34",
     "file": "audio/Valera_int.mp3",
     "photo": "assets/Valera.png",
-    "description": "Воспоминания о студенческих годах, общественной жизни факультета .",
+    "description": "Воспоминания о студенческих годах, общественной жизни факультета.",
     "keywords": [
       "студенческая жизнь",
       "перестройка",
@@ -37,8 +37,8 @@
     ],
     "allow_download": true,
     "published": true,
-    "media_type": "video",
-    "video": "video/Valera_int.mp4"
+    "media_type": "embed",
+    "video_url": "https://vk.com/video_example_1"
   },
   {
     "id": "JA_20251105_02",
@@ -78,7 +78,8 @@
     ],
     "allow_download": true,
     "published": true,
-    "media_type": "audio"
+    "media_type": "embed",
+    "video_url": "https://vk.com/video_example_2"
   },
   {
     "id": "JA_20251109_03",
@@ -118,20 +119,21 @@
     ],
     "allow_download": false,
     "published": false,
-    "media_type": "audio"
+    "media_type": "embed",
+    "video_url": "https://vk.com/video_example_3"
   },
   {
-    "id": "JA_20251101_01",
-    "name": "Эрен егер",
+    "id": "JA_20251101_04",
+    "name": "Эрен Егер",
     "role": "Выпускник 2025 г.",
     "year": "2024",
     "date": "2025-11-01",
     "place": "Екатеринбург",
-    "interviewer": "ВАСЯ.",
+    "interviewer": "Вася",
     "duration": "28:34",
     "file": "audio/Valera_int.mp3",
     "photo": "assets/Valera.png",
-    "description": "Воспоминания о студенческих годах, общественной жизни факультета .",
+    "description": "Воспоминания о студенческих годах, общественной жизни факультета.",
     "keywords": [
       "студенческая жизнь",
       "перестройка",
@@ -141,7 +143,7 @@
     "transcript": [
       {
         "t": "00:00",
-        "s": "Здравствуйте. Меня зовут Валера. Я расскажу о моих студенческих годах."
+        "s": "Здравствуйте. Меня зовут Эрен. Я расскажу о моих студенческих годах."
       },
       {
         "t": "00:12",
@@ -158,7 +160,7 @@
     ],
     "allow_download": true,
     "published": true,
-    "media_type": "video",
-    "video": "video/Valera_int.mp4"
+    "media_type": "embed",
+    "video_url": "https://vk.com/video_example_4"
   }
 ]
