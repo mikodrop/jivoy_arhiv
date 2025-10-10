@@ -1,7 +1,7 @@
-// Enhanced JS for Живой Архив demo site - v2
+// Enhanced JS for Живой Архив — fixed v2
 async function loadData(){
   try {
-    const res = await fetch('data.json');
+    const res = await fetch('data.json', { cache: "no-store" });
     const data = await res.json();
     return data;
   } catch(e){
@@ -13,12 +13,11 @@ async function loadData(){
 function createCard(item){
   const div = document.createElement('div');
   div.className = 'card';
-  // quote overlay for featured
-  const quote = item.description.length > 80 ? item.description.slice(0,80) + '…' : item.description;
+  const quote = (item.description || '').length > 80 ? (item.description || '').slice(0,80) + '…' : (item.description || '');
   div.innerHTML = `
     <a href="record.html?id=${encodeURIComponent(item.id)}"><img src="${item.photo}" alt="${item.name}"></a>
     <h4><a href="record.html?id=${encodeURIComponent(item.id)}">${item.name}</a></h4>
-    <p class="meta">${item.role} • ${item.date}</p>
+    <p class="meta">${item.role || ''} ${item.date ? ' • ' + item.date : ''}</p>
     <p>${quote}</p>
   `;
   return div;
@@ -28,7 +27,9 @@ function renderFeatured(data){
   const list = document.getElementById('featured-list');
   if(!list) return;
   list.innerHTML = '';
-  const featured = data.slice(0,3);
+  // show first 3 published if available, otherwise show first 3
+  const published = data.filter(d => d.published);
+  const featured = (published.length ? published : data).slice(0,3);
   featured.forEach(it => list.appendChild(createCard(it)));
 }
 
@@ -42,6 +43,7 @@ function renderList(data){
 function populateYears(data){
   const sel = document.getElementById('filter-year');
   if(!sel) return;
+  sel.innerHTML = '<option value=\"\">Все годы</option>';
   const years = Array.from(new Set(data.map(d=>d.year).filter(Boolean))).sort();
   years.forEach(y=>{
     const opt = document.createElement('option');
@@ -56,14 +58,13 @@ function getQueryParam(name){
 }
 
 function timeToSeconds(t){
-  // t format "HH:MM" or "MM:SS" or "HH:MM:SS"
-  const parts = t.split(':').map(x=>parseInt(x,10));
+  const parts = (t || '').split(':').map(x=>parseInt(x,10) || 0);
   if(parts.length===2) return parts[0]*60 + parts[1];
   if(parts.length===3) return parts[0]*3600 + parts[1]*60 + parts[2];
   return 0;
 }
 
-function renderTranscript(rec, audioEl, container){
+function renderTranscript(rec, mediaEl, container){
   if(!rec.transcript || !Array.isArray(rec.transcript)) return;
   const tr = document.createElement('div');
   tr.className = 'transcript';
@@ -74,21 +75,25 @@ function renderTranscript(rec, audioEl, container){
     div.dataset.time = tsec;
     div.innerHTML = `<strong>[${line.t}]</strong> ${line.s}`;
     div.addEventListener('click', ()=> {
-      if(audioEl) audioEl.currentTime = tsec;
-      audioEl.play();
+      if(mediaEl && (mediaEl.tagName.toLowerCase()==='audio' || mediaEl.tagName.toLowerCase()==='video')){
+        try { mediaEl.currentTime = tsec; mediaEl.play(); } catch(e){ /* ignore */ }
+      } else {
+        // external video link — open in new tab
+        if(rec.video_url) window.open(rec.video_url, '_blank');
+      }
     });
     tr.appendChild(div);
   });
   container.appendChild(tr);
 
-  // sync highlight on timeupdate
-  if(audioEl){
-    audioEl.addEventListener('timeupdate', ()=>{
-      const t = audioEl.currentTime;
+  // sync highlight on timeupdate (only for audio/video)
+  if(mediaEl && (mediaEl.tagName.toLowerCase()==='audio' || mediaEl.tagName.toLowerCase()==='video')){
+    mediaEl.addEventListener('timeupdate', ()=>{
+      const t = mediaEl.currentTime;
       const lines = tr.querySelectorAll('.line');
       let active = null;
       for(let i=0;i<lines.length;i++){
-        const lt = parseFloat(lines[i].dataset.time);
+        const lt = parseFloat(lines[i].dataset.time) || 0;
         const nt = (i+1<lines.length) ? parseFloat(lines[i+1].dataset.time) : Infinity;
         if(t>=lt && t<nt){ active = lines[i]; break; }
       }
@@ -98,7 +103,7 @@ function renderTranscript(rec, audioEl, container){
   }
 }
 
-// ЗАМЕНИТЕ СУЩЕСТВУЮЩУЮ функцию renderRecord на ЭТУ:
+// render a single record (safe: external videos are links only)
 function renderRecord(data){
   const id = getQueryParam('id');
   if(!id) return;
@@ -109,22 +114,15 @@ function renderRecord(data){
     return;
   }
 
-  // preview image
   const galleryHtml = `<div class="gallery"><img src="${rec.photo}" alt="${rec.name}" class="gallery-thumb" style="cursor:pointer; border-radius:6px; max-width:360px;"></div>`;
 
-  // download button: только для аудио и если разрешено
   const downloadBtn = (rec.allow_download && rec.media_type === 'audio' && rec.file) 
     ? `<a href="${rec.file}" download class="btn-download">Скачать аудио</a>` 
     : '';
 
-  // media area: приоритет
-  // 1) если задан rec.video_url -> показываем ссылку (в новой вкладке)
-  // 2) иначе если media_type=="video" и есть локальный rec.video -> <video>
-  // 3) иначе показываем аудио, если есть rec.file
   let mediaHtml = '';
   if(rec.video_url){
-    // Показываем аккуратную кнопку-ссылку (без iframe)
-    const safeUrl = rec.video_url.replace(/"/g,''); // минимальная санитизация
+    const safeUrl = String(rec.video_url).replace(/"/g,'');
     mediaHtml = `<p style="margin:12px 0;"><a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="btn">🎥 Смотреть видео</a></p>`;
   } else if(rec.media_type === 'video' && rec.video){
     mediaHtml = `<video controls style="width:100%; max-height:520px; margin:12px 0;"><source src="${rec.video}" type="video/mp4">Ваш браузер не поддерживает видео.</video>`;
@@ -142,7 +140,7 @@ function renderRecord(data){
         </div>
         <div style="flex:2; min-width:300px;">
           <h2>${rec.name}</h2>
-          <p class="meta">${rec.role} • ${rec.date} • ${rec.duration} ${downloadBtn}</p>
+          <p class="meta">${rec.role || ''} ${rec.date ? ' • ' + rec.date : ''} ${rec.duration ? ' • ' + rec.duration : ''} ${downloadBtn}</p>
           ${mediaHtml}
           <p>${rec.description || ''}</p>
           <div class="meta">
@@ -153,90 +151,14 @@ function renderRecord(data){
     </div>
   `;
 
-  // modal для фото
   const img = container.querySelector('.gallery-thumb');
   if(img){
     img.addEventListener('click', ()=> showModal(img.src));
   }
 
-  // привязка транскрипта к аудио/видео (если есть локальный media элемент)
   const mediaEl = container.querySelector('audio, video');
   renderTranscript(rec, mediaEl, container);
 }
-
-
-  // Формируем HTML
-  const galleryHtml = `
-    <div class="gallery">
-      <img src="${rec.photo}" alt="${rec.name}" class="gallery-thumb" style="cursor:pointer; border-radius:6px;">
-    </div>
-  `;
-
-  // Кнопка скачивания (только для аудио)
-  const downloadBtn = rec.allow_download && rec.media_type === "audio"
-    ? `<a href="${rec.file}" download class="btn-download">Скачать аудио</a>`
-    : "";
-
-  // Блок для медиа
-  let mediaBlock = "";
-  if (rec.media_type === "embed" && rec.video_url) {
-    // если видео встроенное (например, VK)
-    mediaBlock = `
-      <div class="video-wrapper" style="margin: 10px 0;">
-        <iframe src="${rec.video_url}" width="640" height="360" frameborder="0" allowfullscreen></iframe>
-      </div>
-    `;
-  } else if (rec.media_type === "video" && rec.video) {
-    // если видео локальное
-    mediaBlock = `
-      <video controls style="width:100%; margin:10px 0;">
-        <source src="${rec.video}" type="video/mp4">
-        Ваш браузер не поддерживает видео.
-      </video>
-    `;
-  } else if (rec.media_type === "audio" && rec.file) {
-    // если аудио
-    mediaBlock = `
-      <audio id="audio-player" controls style="width:100%; margin:10px 0;">
-        <source src="${rec.file}" type="audio/mpeg">
-        Ваш браузер не поддерживает аудио.
-      </audio>
-    `;
-  }
-
-  container.innerHTML = `
-    <div class="record card">
-      <div style="display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap;">
-        <div style="flex:1; min-width:260px;">
-          ${galleryHtml}
-        </div>
-        <div style="flex:2; min-width:300px;">
-          <h2>${rec.name}</h2>
-          <p class="meta">${rec.role} • ${rec.date} • ${rec.duration} ${downloadBtn}</p>
-          ${mediaBlock}
-          <p>${rec.description}</p>
-          <div class="meta">
-            <strong>Интервьюер:</strong> ${rec.interviewer} • 
-            <strong>Ключевые слова:</strong> ${rec.keywords.join(', ')}
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-
-  // Открытие фото в модальном окне
-  const img = container.querySelector('.gallery-thumb');
-  if (img) {
-    img.addEventListener('click', () => {
-      showModal(img.src);
-    });
-  }
-
-  // если аудио, активируем подсветку транскрипта
-  const audioEl = document.getElementById('audio-player');
-  renderTranscript(rec, audioEl, container);
-}
-
 
 function setupSearchFilter(data){
   const input = document.getElementById('search');
@@ -244,7 +166,6 @@ function setupSearchFilter(data){
   const clear = document.getElementById('clear');
   if(!input) return;
 
-  // autocomplete elements
   const acWrap = input.parentElement;
   acWrap.classList.add('autocomplete');
   const acList = document.createElement('div');
@@ -271,8 +192,7 @@ function setupSearchFilter(data){
     const q = input.value.trim().toLowerCase();
     const year = sel ? sel.value : '';
     if(q && q.length>=2){
-      // show autocomplete
-      const matches = data.filter(d=> (d.name + ' ' + d.description + ' ' + d.keywords.join(' ')).toLowerCase().includes(q));
+      const matches = data.filter(d=> (d.name + ' ' + (d.description||'') + ' ' + (d.keywords||[]).join(' ')).toLowerCase().includes(q));
       showAutocomplete(matches);
     } else {
       acList.style.display='none';
@@ -281,7 +201,7 @@ function setupSearchFilter(data){
     const filtered = data.filter(d=>{
       let ok=true;
       if(q){
-        ok = (d.name + ' ' + d.description + ' ' + d.keywords.join(' ')).toLowerCase().includes(q);
+        ok = (d.name + ' ' + (d.description||'') + ' ' + (d.keywords||[]).join(' ')).toLowerCase().includes(q);
       }
       if(ok && year){
         ok = d.year===year;
@@ -290,6 +210,7 @@ function setupSearchFilter(data){
     });
     renderList(filtered);
   }
+
   input.addEventListener('input', apply);
   input.addEventListener('focus', apply);
   document.addEventListener('click', (e)=> {
@@ -316,11 +237,7 @@ function showModal(src){
   modal.style.display = 'flex';
 }
 
-
-
-// NEWS: render published records, considering localStorage overrides
 function getPublishedRecords(data){
-  // local overrides stored as { publishedIds: {ID: true} } in localStorage
   const overrides = JSON.parse(localStorage.getItem('ja_published_overrides') || '{}');
   return data.filter(d=>{
     const localVal = overrides[d.id];
@@ -338,13 +255,12 @@ function renderNews(data){
   news.forEach(item=>{
     const div = document.createElement('div');
     div.className = 'card';
-    const snippet = item.description.length>120 ? item.description.slice(0,120)+'…' : item.description;
+    const snippet = (item.description || '').length>120 ? item.description.slice(0,120)+'…' : (item.description || '');
     div.innerHTML = `<h4><a href="record.html?id=${encodeURIComponent(item.id)}">${item.name}</a></h4><p class="meta">${item.date} • ${item.role}</p><p>${snippet}</p>`;
     list.appendChild(div);
   });
 }
 
-// Admin publish button handler (local demo)
 function setupNewsAdmin(data){
   const btn = document.getElementById('publish-btn');
   const input = document.getElementById('pub-id');
@@ -362,7 +278,6 @@ function setupNewsAdmin(data){
   });
 }
 
-// Render news block on index
 function renderNewsBlock(data){
   const block = document.getElementById('news-list');
   if(!block) return;
@@ -371,7 +286,6 @@ function renderNewsBlock(data){
     block.appendChild(createCard(item));
   });
 }
-
 
 document.addEventListener('DOMContentLoaded', async ()=>{
   const data = await loadData();
@@ -384,8 +298,6 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   setupNewsAdmin(data);
   renderNewsBlock(data);
 
-
-  // simple demo: form submission local save
   const form = document.getElementById('contrib-form');
   if(form){
     form.addEventListener('submit', (e)=>{
@@ -398,3 +310,4 @@ document.addEventListener('DOMContentLoaded', async ()=>{
     })
   }
 });
+
