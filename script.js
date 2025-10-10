@@ -98,19 +98,55 @@ function renderTranscript(rec, audioEl, container){
   }
 }
 
-function renderRecord(data){
+function renderRecord(data) {
   const id = getQueryParam('id');
-  if(!id) return;
-  const rec = data.find(d=>d.id===id);
+  if (!id) return;
+  const rec = data.find(d => d.id === id);
   const container = document.getElementById('record');
-  if(!rec || !container){
-    if(container) container.innerHTML = '<p>Запись не найдена.</p>';
+  if (!rec || !container) {
+    if (container) container.innerHTML = '<p>Запись не найдена.</p>';
     return;
   }
-  // build gallery
-  const galleryHtml = `<div class="gallery"><img src="${rec.photo}" alt="${rec.name}" class="gallery-thumb" style="cursor:pointer; border-radius:6px;"></div>`;
-  // download button only if allowed
-  const downloadBtn = rec.allow_download ? `<a href="${rec.file}" download class="btn-download">Download audio</a>` : '';
+
+  // Формируем HTML
+  const galleryHtml = `
+    <div class="gallery">
+      <img src="${rec.photo}" alt="${rec.name}" class="gallery-thumb" style="cursor:pointer; border-radius:6px;">
+    </div>
+  `;
+
+  // Кнопка скачивания (только для аудио)
+  const downloadBtn = rec.allow_download && rec.media_type === "audio"
+    ? `<a href="${rec.file}" download class="btn-download">Скачать аудио</a>`
+    : "";
+
+  // Блок для медиа
+  let mediaBlock = "";
+  if (rec.media_type === "embed" && rec.video_url) {
+    // если видео встроенное (например, VK)
+    mediaBlock = `
+      <div class="video-wrapper" style="margin: 10px 0;">
+        <iframe src="${rec.video_url}" width="640" height="360" frameborder="0" allowfullscreen></iframe>
+      </div>
+    `;
+  } else if (rec.media_type === "video" && rec.video) {
+    // если видео локальное
+    mediaBlock = `
+      <video controls style="width:100%; margin:10px 0;">
+        <source src="${rec.video}" type="video/mp4">
+        Ваш браузер не поддерживает видео.
+      </video>
+    `;
+  } else if (rec.media_type === "audio" && rec.file) {
+    // если аудио
+    mediaBlock = `
+      <audio id="audio-player" controls style="width:100%; margin:10px 0;">
+        <source src="${rec.file}" type="audio/mpeg">
+        Ваш браузер не поддерживает аудио.
+      </audio>
+    `;
+  }
+
   container.innerHTML = `
     <div class="record card">
       <div style="display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap;">
@@ -120,31 +156,30 @@ function renderRecord(data){
         <div style="flex:2; min-width:300px;">
           <h2>${rec.name}</h2>
           <p class="meta">${rec.role} • ${rec.date} • ${rec.duration} ${downloadBtn}</p>
-          <audio id="audio-player" controls style="width:100%; margin:10px 0;">
-            <source src="${rec.file}" type="audio/mpeg">
-            Your browser does not support audio.
-          </audio>
+          ${mediaBlock}
           <p>${rec.description}</p>
           <div class="meta">
-            <strong>Interviewer:</strong> ${rec.interviewer} • <strong>Keywords:</strong> ${rec.keywords.join(', ')}
+            <strong>Интервьюер:</strong> ${rec.interviewer} • 
+            <strong>Ключевые слова:</strong> ${rec.keywords.join(', ')}
           </div>
         </div>
       </div>
     </div>
   `;
 
-  // image modal setup
+  // Открытие фото в модальном окне
   const img = container.querySelector('.gallery-thumb');
-  if(img){
-    img.addEventListener('click', ()=>{
+  if (img) {
+    img.addEventListener('click', () => {
       showModal(img.src);
     });
   }
 
+  // если аудио, активируем подсветку транскрипта
   const audioEl = document.getElementById('audio-player');
-  // render transcript under record
   renderTranscript(rec, audioEl, container);
 }
+
 
 function setupSearchFilter(data){
   const input = document.getElementById('search');
