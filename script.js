@@ -98,15 +98,72 @@ function renderTranscript(rec, audioEl, container){
   }
 }
 
-function renderRecord(data) {
+// ЗАМЕНИТЕ СУЩЕСТВУЮЩУЮ функцию renderRecord на ЭТУ:
+function renderRecord(data){
   const id = getQueryParam('id');
-  if (!id) return;
-  const rec = data.find(d => d.id === id);
+  if(!id) return;
+  const rec = data.find(d=>d.id===id);
   const container = document.getElementById('record');
-  if (!rec || !container) {
-    if (container) container.innerHTML = '<p>Запись не найдена.</p>';
+  if(!rec || !container){
+    if(container) container.innerHTML = '<p>Запись не найдена.</p>';
     return;
   }
+
+  // preview image
+  const galleryHtml = `<div class="gallery"><img src="${rec.photo}" alt="${rec.name}" class="gallery-thumb" style="cursor:pointer; border-radius:6px; max-width:360px;"></div>`;
+
+  // download button: только для аудио и если разрешено
+  const downloadBtn = (rec.allow_download && rec.media_type === 'audio' && rec.file) 
+    ? `<a href="${rec.file}" download class="btn-download">Скачать аудио</a>` 
+    : '';
+
+  // media area: приоритет
+  // 1) если задан rec.video_url -> показываем ссылку (в новой вкладке)
+  // 2) иначе если media_type=="video" и есть локальный rec.video -> <video>
+  // 3) иначе показываем аудио, если есть rec.file
+  let mediaHtml = '';
+  if(rec.video_url){
+    // Показываем аккуратную кнопку-ссылку (без iframe)
+    const safeUrl = rec.video_url.replace(/"/g,''); // минимальная санитизация
+    mediaHtml = `<p style="margin:12px 0;"><a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="btn">🎥 Смотреть видео</a></p>`;
+  } else if(rec.media_type === 'video' && rec.video){
+    mediaHtml = `<video controls style="width:100%; max-height:520px; margin:12px 0;"><source src="${rec.video}" type="video/mp4">Ваш браузер не поддерживает видео.</video>`;
+  } else if(rec.file){
+    mediaHtml = `<audio id="audio-player" controls style="width:100%; margin:12px 0;"><source src="${rec.file}" type="audio/mpeg">Ваш браузер не поддерживает аудио.</audio>`;
+  } else {
+    mediaHtml = `<p class="note">Медиафайл не найден.</p>`;
+  }
+
+  container.innerHTML = `
+    <div class="record card">
+      <div style="display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap;">
+        <div style="flex:1; min-width:260px;">
+          ${galleryHtml}
+        </div>
+        <div style="flex:2; min-width:300px;">
+          <h2>${rec.name}</h2>
+          <p class="meta">${rec.role} • ${rec.date} • ${rec.duration} ${downloadBtn}</p>
+          ${mediaHtml}
+          <p>${rec.description || ''}</p>
+          <div class="meta">
+            <strong>Интервьюер:</strong> ${rec.interviewer || ''} • <strong>Ключевые слова:</strong> ${rec.keywords ? rec.keywords.join(', ') : ''}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // modal для фото
+  const img = container.querySelector('.gallery-thumb');
+  if(img){
+    img.addEventListener('click', ()=> showModal(img.src));
+  }
+
+  // привязка транскрипта к аудио/видео (если есть локальный media элемент)
+  const mediaEl = container.querySelector('audio, video');
+  renderTranscript(rec, mediaEl, container);
+}
+
 
   // Формируем HTML
   const galleryHtml = `
