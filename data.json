@@ -42,20 +42,20 @@
   },
   {
     "id": "JA_20251105_02",
-    "name": "Александр Палкин",
-    "role": "Декан 2019–2025",
+    "name": "Дарья Кадышнекова",
+    "role": "Выпускница",
     "year": "1990",
-    "date": "2025-11-05",
+    "date": "2025-17-10",
     "place": "Екатеринбург",
     "interviewer": "Данил",
-    "duration": "18:12",
+    "duration": "8:27",
     "file": "audio/Palkin_int.mp3",
-    "photo": "assets/Palkin.png",
-    "description": "Истории о преподавании, изменениях в учебных программах и курьёзах на парах.",
+    "photo": "assets/dasha.jpg",
+    "description": "Интересные истории из жизни на Истфаке",
     "keywords": [
-      "преподавание",
+      "история",
       "университет",
-      "реформы"
+      "тусы"
     ],
     "consent": "полное",
     "transcript": [
@@ -79,7 +79,7 @@
     "allow_download": true,
     "published": true,
     "media_type": "embed",
-    "video_url": "https://vk.com/video_example_2"
+    "video_url": "https://vkvideo.ru/video-233341706_456239018"
   },
   {
     "id": "JA_20251109_03",
