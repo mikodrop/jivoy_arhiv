@@ -41,11 +41,11 @@
     "video_url": "https://vkvideo.ru/video-233341706_456239019"
   },
   {
-    "id": "JA_20251105_02",
+    "id": "JA_20251017_02",
     "name": "Андрей Кривошеев",
     "role": "Выпускник",
     "year": "1990",
-    "date": "2025-17-10",
+    "date": "2025-10-17",
     "place": "Екатеринбург",
     "interviewer": "Данил",
     "duration": "3:17",
@@ -58,19 +58,18 @@
       "тусы"
     ],
     "consent": "полное",
-    "transcript": [
-    ],
+    "transcript": [],
     "allow_download": true,
     "published": true,
     "media_type": "embed",
     "video_url": "https://vkvideo.ru/video-233341706_456239023"
   },
   {
-    "id": "JA_20251105_02",
+    "id": "JA_20251017_03",
     "name": "Амина Острикова",
     "role": "Выпускник",
     "year": "1990",
-    "date": "2025-17-10",
+    "date": "2025-10-17",
     "place": "Екатеринбург",
     "interviewer": "Данил",
     "duration": "8:08",
@@ -83,19 +82,18 @@
       "тусы"
     ],
     "consent": "полное",
-    "transcript": [
-    ],
+    "transcript": [],
     "allow_download": true,
     "published": true,
     "media_type": "embed",
     "video_url": "https://vkvideo.ru/video-233341706_456239022"
   },
   {
-    "id": "JA_20251105_02",
-    "name": "Андрей Кривошеев",
+    "id": "JA_20251017_04",
+    "name": "Андрей Кривошеев (повтор)",
     "role": "Выпускник",
     "year": "1990",
-    "date": "2025-17-10",
+    "date": "2025-10-17",
     "place": "Екатеринбург",
     "interviewer": "Данил",
     "duration": "3:17",
@@ -108,19 +106,18 @@
       "тусы"
     ],
     "consent": "полное",
-    "transcript": [
-    ],
+    "transcript": [],
     "allow_download": true,
     "published": true,
     "media_type": "embed",
     "video_url": "https://vkvideo.ru/video-233341706_456239023"
   },
   {
-    "id": "JA_20251105_02",
+    "id": "JA_20251017_05",
     "name": "Соколов Сергей Васильевич",
     "role": "Старший научный сотрудник, Заведующий кафедрой Истории",
     "year": "1990",
-    "date": "2025-17-10",
+    "date": "2025-10-17",
     "place": "Екатеринбург",
     "interviewer": "Данил",
     "duration": "4:08",
@@ -133,19 +130,18 @@
       "курсы"
     ],
     "consent": "полное",
-    "transcript": [
-    ],
+    "transcript": [],
     "allow_download": true,
     "published": true,
     "media_type": "embed",
     "video_url": "https://vkvideo.ru/video-233341706_456239021"
   },
   {
-    "id": "JA_20251105_02",
+    "id": "JA_20251017_06",
     "name": "Дарья Кадышнекова",
     "role": "Выпускница",
     "year": "1990",
-    "date": "2025-17-10",
+    "date": "2025-10-17",
     "place": "Екатеринбург",
     "interviewer": "Данил",
     "duration": "8:27",
@@ -223,7 +219,7 @@
     "video_url": "https://vk.com/video_example_3"
   },
   {
-    "id": "JA_20251101_04",
+    "id": "JA_20251115_07",
     "name": "Семен Грудненко",
     "role": "Студент 4 курса направления Туризм.",
     "year": "2025",
@@ -264,3 +260,4 @@
     "video_url": "https://vkvideo.ru/video-233341706_456239017"
   }
 ]
+
