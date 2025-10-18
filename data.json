@@ -92,6 +92,56 @@
   },
   {
     "id": "JA_20251105_02",
+    "name": "Андрей Кривошеев",
+    "role": "Выпускник",
+    "year": "1990",
+    "date": "2025-17-10",
+    "place": "Екатеринбург",
+    "interviewer": "Данил",
+    "duration": "3:17",
+    "file": "audio/Palkin_int.mp3",
+    "photo": "assets/andrey.png",
+    "description": "Интересные истории из жизни на Истфаке",
+    "keywords": [
+      "история",
+      "университет",
+      "тусы"
+    ],
+    "consent": "полное",
+    "transcript": [
+    ],
+    "allow_download": true,
+    "published": true,
+    "media_type": "embed",
+    "video_url": "https://vkvideo.ru/video-233341706_456239023"
+  },
+  {
+    "id": "JA_20251105_02",
+    "name": "Соколов Сергей Васильевич",
+    "role": "Старший научный сотрудник, Заведующий кафедрой Истории",
+    "year": "1990",
+    "date": "2025-17-10",
+    "place": "Екатеринбург",
+    "interviewer": "Данил",
+    "duration": "4:08",
+    "file": "audio/Palkin_int.mp3",
+    "photo": "assets/sergey.jpg",
+    "description": "Интересные истории из жизни на Истфаке",
+    "keywords": [
+      "история",
+      "университет",
+      "курсы"
+    ],
+    "consent": "полное",
+    "transcript": [
+    ],
+    "allow_download": true,
+    "published": true,
+    "media_type": "embed",
+    "video_url": "https://vkvideo.ru/video-233341706_456239021"
+  },
+  {
+    "id": "JA_20251105_02",
     "name": "Дарья Кадышнекова",
     "role": "Выпускница",
     "year": "1990",
