@@ -67,6 +67,31 @@
   },
   {
     "id": "JA_20251105_02",
+    "name": "Амина Острикова",
+    "role": "Выпускник",
+    "year": "1990",
+    "date": "2025-17-10",
+    "place": "Екатеринбург",
+    "interviewer": "Данил",
+    "duration": "8:08",
+    "file": "audio/Palkin_int.mp3",
+    "photo": "assets/amina.jpg",
+    "description": "Интересные истории из жизни на Истфаке",
+    "keywords": [
+      "история",
+      "университет",
+      "тусы"
+    ],
+    "consent": "полное",
+    "transcript": [
+    ],
+    "allow_download": true,
+    "published": true,
+    "media_type": "embed",
+    "video_url": "https://vkvideo.ru/video-233341706_456239022"
+  },
+  {
+    "id": "JA_20251105_02",
     "name": "Дарья Кадышнекова",
     "role": "Выпускница",
     "year": "1990",
