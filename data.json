@@ -123,6 +123,31 @@
     "video_url": "https://vkvideo.ru/video-233341706_456239024"
   },
   {
+    "id": "JA_20251109_08",
+    "name": "Соколов Сергей Васильевич",
+    "role": "Преподаватель",
+    "year": "2004",
+    "date": "2025-11-09",
+    "place": "Екатеринбург",
+    "interviewer": "Данил",
+    "duration": "04:08",
+    "file": "audio/Pashkin_int.mp3",
+    "photo": "assets/orlov.jpg",
+    "description": "О жизни в общаге, студенческих традициях и участии в движении студенческих театров.",
+    "keywords": [
+      "гуртожиток",
+      "традиции",
+      "театр"
+    ],
+    "consent": "ограниченное",
+    "transcript": [
+    ],
+    "allow_download": false,
+    "published": false,
+    "media_type": "embed",
+    "video_url": "https://vkvideo.ru/video-233341706_456239024"
+  },
+  {
     "id": "JA_20251115_07",
     "name": "Семен Грудненко",
     "role": "Студент 4 курса направления Туризм.",
